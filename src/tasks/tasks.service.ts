@@ -14,6 +14,10 @@ export class TasksService {
         private taskRepository: TaskRepository
     ) {}
 
+    async getTasks(filterDto: getTasksFilterDTO): Promise<Task[]> {
+        return await this.taskRepository.getTasks(filterDto)
+    }
+
     // getAlltasks(): Task[] {
     //     return this.tasks
     // }
@@ -49,15 +53,19 @@ export class TasksService {
         return this.taskRepository.createTask(createTaskDto)
     }
 
+    async deleteTask(id: number): Promise<void> {
+        const result = await this.taskRepository.delete(id)
 
-    // deleteTask(id: string): void {
-    //     const found = this.getTaskById(id)
-    //     this.tasks = this.tasks.filter(task => task.id !== found.id)
-    // }
-    
-    // updateTaskStatus(id: string, status: TaskStatus): Task {
-    //     const task = this.getTaskById(id)
-    //     task.status = status
-    //     return task
-    // }
+        if (result.affected === 0) {
+            throw new NotFoundException(`Tarefa com ID ${id} não encontrada`)
+        }
+        
+    }
+
+    async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
+        const task = await this.getTaskById(id)
+        task.status = status
+        await task.save()
+        return task
+    }
 }

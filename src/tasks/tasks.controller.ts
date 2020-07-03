@@ -4,19 +4,16 @@ import { CreateTaskDTO } from './dto/create-task.dto';
 import { getTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/tasks-status-validation.pipe';
 import { Task } from './task.entity';
+import { TaskStatus } from './tasks-status.enum';
 
 @Controller('tasks')
 export class TasksController {
     constructor(private taskService: TasksService) {}
 
-    // @Get()
-    // getTasks(@Query(ValidationPipe) filterDto: getTasksFilterDTO): Task[] {
-    //     if (Object.keys(filterDto).length) {
-    //         return this.taskService.getTasksWithFilters(filterDto)
-    //     } else {
-    //         return this.taskService.getAlltasks()
-    //     }
-    // }
+    @Get()
+    getTasks(@Query(ValidationPipe) filterDto: getTasksFilterDTO): Promise<Task[]> {
+        return this.taskService.getTasks(filterDto)
+    }
 
     @Get('/:id')
     getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
@@ -29,15 +26,16 @@ export class TasksController {
         return this.taskService.createTask(createTaskDto)
     }
 
-    // @Delete('/:id')
-    // deleteTaskById(@Param('id') id: string): void {
-    //     this.taskService.deleteTask(id)
-    // }
-    // @Patch('/:id/status')
-    // updateTaskStatus(
-    //     @Param('id') id: string,
-    //     @Body('status', TaskStatusValidationPipe) status: TaskStatus
-    // ): Task {
-    //     return this.taskService.updateTaskStatus(id, status)
-    // }
+    @Delete('/:id')
+    deleteTaskById(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        return this.taskService.deleteTask(id)
+    }
+
+    @Patch('/:id/status')
+    updateTaskStatus(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('status', TaskStatusValidationPipe) status: TaskStatus
+    ): Promise<Task> {
+        return this.taskService.updateTaskStatus(id, status)
+    }
 }
