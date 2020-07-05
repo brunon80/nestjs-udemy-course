@@ -10,7 +10,8 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     PassportModule.register({
-      defaultStrategy:  'jwt'
+      defaultStrategy:  'jwt',
+      property: 'user' // o token decodado será colocado em uma variavel com esse nome no req
     }),
     JwtModule.register({
       secret: 'topSecret51',
